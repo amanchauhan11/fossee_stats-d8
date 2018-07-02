@@ -1,0 +1,126 @@
+#testimonials-wrapper .testimonial {
+    position: relative;
+    text-align: justify;
+    margin: 25px 0 0 0;
+    padding: 0 0 10px 0;
+    background: #e5e5e5;
+    padding: 10px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -o-border-radius: 5px;
+    border-radius: 5px;
+}
+#testimonials-wrapper .testimonial > .author {
+    text-align: right;
+    font-weight: bolder;
+    margin: 15px 0 0 0;
+    background: #ffffff;
+    padding: 10px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -o-border-radius: 5px;
+    border-radius: 5px;
+}
+#testimonials_front{
+        padding: 10px 20px 15px 20px;
+        background:url('../images/open-quote.png') no-repeat ;
+        background-size: 22px 22px;
+        background-position: 18px 23px;
+        text-align:justify;
+        min-height:90px;
+        margin-top: 10px;
+        -moz-border-radius:12px;
+        -webkit-border-radius:12px;
+        border-radius:12px;
+        box-shadow: 1px 1px 4px 1px #888888;
+      /*  height:135px;*/
+
+}
+#testimonials_front a{
+        /* float:left; */
+}
+
+.testimonial_head
+{
+
+        text-align:left;
+        margin-top:-14px;
+        font-size:16px;
+}
+
+#testimonials_front li{ display:none;}
+#testimonials_front li:first-child{ display:block;width:100%}
+
+#testimonials_front ul{ list-style:none;}
+
+#testimonials_front h4{
+color:#3399FF;
+margin-top:-20px;
+
+}
+
+#testimonials_one{
+        padding: 7px 20px 1px 20px;
+        background:url('../images/open-quote.png') no-repeat ;
+        background-size: 22px 22px;
+        background-position: 18px 23px;
+        text-align:justify;
+        margin-top: 10px;
+        -moz-border-radius:12px;
+        -webkit-border-radius:12px;
+        border-radius:2px;
+        box-shadow: 1px 1px 4px 1px #888888;
+        width: 94%;
+margin: 30px;
+
+}
+
+
+#testimonials_one a{
+        /* float:left; */
+}
+
+
+#testimonials_one li{ display:none;}
+#testimonials_one li:first-child{ display:block;}
+
+#testimonials_one ul{ list-style:none;}
+
+
+#testimonials_one h4{
+color:#3399FF;
+margin-top:-20px;
+}
+
+.testimonial-row-name-dept-un {
+    text-align:right;
+    margin-top:-20px;
+    color:#413E3E;
+    width:100%;
+}
+
+.testimonial-row-body {
+    margin-top:-7px;
+    color:#413E3E;
+    font-style:italic;
+}
+
+.event-image {
+    width:100px;
+    height:100px;
+    padding-right:20px;
+    padding-bottom:10px;
+}
+
+.speaker-name {
+    padding-left:10px;
+}
+
+.pdf-generate {
+    float:right;
+    padding-bottom:10px;
+}
+
+.vid-link {
+    list-style-type:square;
+}

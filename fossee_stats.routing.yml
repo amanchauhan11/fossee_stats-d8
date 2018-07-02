@@ -1,0 +1,159 @@
+fossee_stats.workshop_display_form:
+  path: '/events/edit'
+  defaults:
+    _form: 'Drupal\fossee_stats\Form\WorkshopDisplayForm'
+  requirements:
+    _permission: 'access content'
+
+fossee_stats.workshop_add_form:
+  path: '/events/add'
+  defaults:
+    _form: 'Drupal\fossee_stats\Form\WorkshopAddForm'
+    _title: 'Add Event'
+  requirements:
+    _permission: 'access content'
+
+fossee_stats.workshop_edit_form:
+  path: '/events/edit/{workshop_id}'
+  defaults:
+    _form: 'Drupal\fossee_stats\Form\WorkshopEditForm'
+    _title: 'Edit Event'
+  requirements:
+    _permission: 'access content'
+
+fossee_stats.settings_form:
+  path: '/admin/fossee_stats/settings'
+  defaults:
+    _form: 'Drupal\fossee_stats\Form\SettingsForm'
+    _title: 'Settings'
+  requirements:
+    _permission: 'administer events'
+
+fossee_stats.upload_csv_form:
+  path: '/events/add/csv'
+  defaults: 
+    _form: 'Drupal\fossee_stats\Form\UploadCsvForm'
+    _title: 'Upload Events through CSV'
+  requirements:
+    _permission: 'access content'
+
+fossee_stats.workshop_delete_prompt:
+  path: '/events/delete/{workshop_id}'
+  defaults: 
+    _form: 'Drupal\fossee_stats\Form\WorkshopDeletePrompt'
+    _title: 'Delete Event'
+  requirements:
+    _permission: 'access content'
+
+fossee_stats.workshop_view_details_all:
+  path: '/events/view_details/{workshop_id}'
+  defaults:
+    _controller: 'Drupal\fossee_stats\Controller\WorkshopViewDetailsAll::content'
+    _title: 'Details of Selected Event'
+  requirements:
+    _permission: 'view workshop'
+
+fossee_stats.generate_pdf:
+  path: '/events/pdfgenerate/{workshop_id}'
+  defaults:
+    _controller: 'Drupal\fossee_stats\Controller\GeneratePDF::content'
+    _title: Generate PDF of Selected Event
+  requirements:
+    _permission: 'view workshop'
+
+fossee_stats.workshop_view_images_all:
+  path: '/events/images/{wid}'
+  defaults:
+    _controller: 'Drupal\fossee_stats\Controller\WorkshopViewImagesAll::content'
+    _title: "Event's Images"
+  requirements:
+    _permission: 'view workshop'
+
+fossee_stats.workshop_view_all_testimonials:
+  path: '/events/testimonials/{workshop_id}'
+  defaults:
+    _controller: 'Drupal\fossee_stats\Controller\WorkshopViewAllTestimonials::content'
+    _title: "Testimonials"
+  requirements:
+    _permission: 'view workshop'
+
+fossee_stats.workshop_view_selected_testimonial:
+  path: '/events/testimonial/view/{id}'
+  defaults:
+    _controller: 'Drupal\fossee_stats\Controller\WorkshopViewSelectedTestimonial::content'
+    _title: "Testimonial"
+  requirements:
+    _permission: 'view workshop'
+
+fossee_stats.event_seminar_view_all:
+  path: '/events'
+  defaults:
+    _controller: 'Drupal\fossee_stats\Controller\EventSeminarViewAll::content'
+    _title: "Event"
+  requirements:
+    _permission: 'view events'
+
+fossee_stats.event_activities_all:
+  path: '/testconf'
+  defaults:
+    _controller: 'Drupal\fossee_stats\Controller\EventActivitiesAll::content'
+    _title: "Activities"
+  requirements:
+    _permission: 'view events'
+
+fossee_stats.postalcampaign_view_withoutfilter:
+  path: '/postalcampaign'
+  defaults:
+    _controller: 'Drupal\fossee_stats\Controller\PostalcampaignView::content'
+    _title: "Postal Campaign"
+  requirements:
+    _permission: 'view postalcampaign'
+
+fossee_stats.postalcampaign_add_form:
+  path: '/postalcampaign/add'
+  defaults: 
+    _form: 'Drupal\fossee_stats\Form\PostalCampaignAddForm'
+    _title: 'Add Postal Campaign'
+  requirements:
+    _permission: 'manage postalcampaign'
+
+fossee_stats.postalcampaign_edit_form:
+  path: '/postalcampaign/edit/{postercampaign_id}'
+  defaults: 
+    _form: 'Drupal\fossee_stats\Form\PostalCampaignEditForm'
+    _title: 'Edit Postal Campaign'
+  requirements:
+    _permission: 'manage postalcampaign'
+
+fossee_stats.postalcampaign_delete:
+  path: '/postalcampaign/delete/{postercampaign_id}'
+  defaults: 
+    _controller: 'Drupal\fossee_stats\Controller\PostalCampaignDelete::content'
+    _title: 'Delete Postal Campaign'
+  requirements:
+    _permission: 'manage postalcampaign'
+
+fossee_stats.view_details:
+  path: '/postalcampaign/view_details/{postalcampaign_id}'
+  defaults: 
+    _controller: 'Drupal\fossee_stats\Controller\PostalcampaignViewDetails::content'
+    _title: 'Postal Campaign Detail'
+  requirements:
+    _permission: 'view postalcampaign'
+
+fossee_stats.download:
+  path: '/postalcampaign/download/{name}'
+  defaults: 
+    _controller: 'Drupal\fossee_stats\Controller\CreateZipOfPosterMaterial::content'
+    _title: 'Download Postal Campaign'
+    name: ''
+  requirements:
+    _permission: 'view postalcampaign'
+
+fossee_stats.fossee_stats:
+  path: '/fossee_stats'
+  defaults: 
+    _form: 'Drupal\fossee_stats\Form\FosseeStatsForm'
+    _title: 'FOSSEE STATS'
+  requirements:
+    _permission: 'access fossee_stats'

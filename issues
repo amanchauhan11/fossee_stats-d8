@@ -1,0 +1,2 @@
+1. Image field ajax does not behave correctly if validation behaves in workshop add/edit form or poster add/edit form.
+2. Database entry of image/poster directory is only created when when it is added first time. It is assumed that no further images will be added to old workhsops/postalcampaigns. If any old workshop/poster record exists which does not have a directory entry and image/poster is added it will go in the main directory.   

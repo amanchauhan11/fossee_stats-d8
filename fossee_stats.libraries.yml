@@ -1,0 +1,49 @@
+highlighter:
+  version: 1.x
+  js:
+    js/highlighter.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupalSettings
+
+validators:
+  version: 1.x
+  js:
+    js/validators.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupalSettings
+
+testimonials:
+  version: 1.x
+  js:
+    js/animate_testimonials.js: {}
+  css:
+    theme:
+      css/testimonials.css: {}
+  dependencies:
+    - core/jquery
+    - core/drupalSettings
+
+image_overlay:
+  version: 1.x
+  js:
+    js/image_overlay.js: {}
+  css:
+    theme:
+      css/image_overlay.css: {}
+  dependencies:
+    - core/jquery
+    - core/drupalSettings
+
+image_styles:
+  version: 1.x
+  css:
+    theme:
+      css/image_styles.css: {}
+
+stats:
+  version: 1.x
+  css:
+    theme:
+      css/stats.css: {}

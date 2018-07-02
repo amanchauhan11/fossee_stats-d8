@@ -1,0 +1,14 @@
+access fossee_stats:
+  title: 'Access fossee_stats'
+  description: 'Allows users to view fossee stats.'
+  restrict access: TRUE
+
+view workshop:
+  title: 'View Workshop'
+  description: 'Allows users to view workshop.'
+  restrict access: TRUE
+
+manage workshop:
+  title: 'Manage Workshop'
+  description: 'Allows users to manage workshop.'
+  restrict access: TRUE

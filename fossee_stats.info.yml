@@ -1,0 +1,6 @@
+name: FOSSEE Stats
+description: Dsiplay various fossee statistics.
+package: Statistics
+
+type: module
+core: 8.x
