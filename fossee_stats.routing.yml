@@ -150,10 +150,18 @@ fossee_stats.download:
   requirements:
     _permission: 'view postalcampaign'
 
-fossee_stats.fossee_stats:
-  path: '/fossee_stats'
+fossee_stats.stats:
+  path: '/fossee-stats'
   defaults: 
     _form: 'Drupal\fossee_stats\Form\FosseeStatsForm'
     _title: 'FOSSEE STATS'
+  requirements:
+    _permission: 'access fossee_stats'
+
+fossee_stats.test:
+  path: '/test'
+  defaults: 
+    _controller: 'Drupal\fossee_stats\Controller\charttest::content'
+    _title: 'STATS'
   requirements:
     _permission: 'access fossee_stats'
