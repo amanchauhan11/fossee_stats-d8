@@ -455,12 +455,10 @@ class FosseeStatsForm extends FormBase {
 
 	    <div class="tab-content">
 
-	        <div id="tbctabledata"class="tab-pane fade in active">' . $this->get_tabledata_TBC_or_LM("TBC", $startdate, $enddate) . '
-	        <div id="tbcchartdata" style="float:left;width:300px;height:300px;">' . \Drupal::service('renderer')->render(getchart("TBC")) . '</div>
+	        <div id="tbctabledata"class="tab-pane fade in active">' . $this->get_tabledata_TBC_or_LM("TBC", $startdate, $enddate) . \Drupal::service('renderer')->render(getchart("TBC")) . '</div>
 	        </div>
 
-	        <div id="lmtabledata" class="tab-pane fade ">' . $this->get_tabledata_TBC_or_LM("LM", $startdate, $enddate) . '
-	        <div id="lmchartdata" style="float:left;width:350px;height:300px;">' . Drupal::service('renderer')->render(getchart("LM")) . '</div>
+	        <div id="lmtabledata" class="tab-pane fade ">' . $this->get_tabledata_TBC_or_LM("LM", $startdate, $enddate)  . Drupal::service('renderer')->render(getchart("LM")) . '</div>
 	        </div>
 
 	        <div id="workshopdata" class="tab-pane fade ">' . EA::workshop_view_all(0, $startdate, $enddate) . '</div>
@@ -824,10 +822,10 @@ class FosseeStatsForm extends FormBase {
 	                $sub_project = "lab_migration_proposal";
 
 	                Database::setActiveConnection($foss_type_name);; //Active other database
-	                $connection = Database::database();
+	                $connection = Database::getConnection();
 	                // $options    = array();
 	                $options[0] = '--------------';
-	                $query = $connection->select($sub_project)->fields($sub_project, 'country')->distinct();
+	                $query = $connection->select($sub_project)->fields($sub_project,['country'])->distinct();
 	                $result = $query->execute();
 	                while ($country_detail = $result->fetchObject()) {
 	                    $options[$country_detail->country] = $country_detail->country;
@@ -1019,7 +1017,7 @@ class FosseeStatsForm extends FormBase {
 	            Database::setActiveConnection($foss_type_name);; //Active other database
 
 	            $options[0] = '--------------';
-	            $result = Database::getConnection()->select($sub_project)->condition('country', $country)->execute();
+	            $result = Database::getConnection()->select($sub_project)->fields($sub_project)->condition('country', $country)->execute();
 
 	            while ($state_detail = $result->fetchObject()) {
 	                $options[$state_detail->state] = $state_detail->state;
@@ -1035,7 +1033,7 @@ class FosseeStatsForm extends FormBase {
 	            Database::setActiveConnection($foss_type_db);;
 
 	            $options[0] = '--------------';
-	            $result = Database::getConnection()->select($sub_project)->condition('country',$country)->execute();
+	            $result = Database::getConnection()->select($sub_project)->fields($sub_project)->condition('country',$country)->execute();
 
 	            while ($state_detail = $result->fetchObject()) {
 	                $options[$state_detail->state] = $state_detail->state;
@@ -1056,7 +1054,11 @@ class FosseeStatsForm extends FormBase {
 	                ":foss_id" => $foss_selfworkshop_no,
 	            );*/
 
-	       	$result = Database::getConnection()->select('events_training', 't')->addJoin('inner', 'events_academiccenter', 'ac', 't.academic_id=ac.id')->addJoin('inner','events_city', 'c', 'ac.city_id=c.id')->addJoin('inner', 'events_state', 's', 'c.state_id=s.id')->condition('status',4)->condition('foss_id', $foss_selfworkshop_no)->fields('s','name')->distinct()->execute();
+	       	$query= Database::getConnection()->select('events_training', 't');
+	       	$query->addJoin('inner', 'events_academiccenter', 'ac', 't.academic_id=ac.id');
+	       	$query->addJoin('inner','events_city', 'c', 'ac.city_id=c.id');
+	       	$query->addJoin('inner', 'events_state', 's', 'c.state_id=s.id');
+	       	$result = $query->condition('status',4)->condition('foss_id', $foss_selfworkshop_no)->fields('s','name')->distinct()->execute();
 
 	            while ($state_detail = $result->fetchObject()) {
 	                $options[$state_detail->state] = $state_detail->state;
@@ -1102,7 +1104,7 @@ class FosseeStatsForm extends FormBase {
 
 	        //Active other database
 	        Database::setActiveConnection($foss_type);;
-	        $result = Database::getConnection()->select($foss_type)->fields($sub_project)->condition('country',$country)->condition('state',$state)->execute();
+	        $result = Database::getConnection()->select($sub_project)->fields($sub_project)->condition('country',$country)->condition('state',$state)->execute();
 
 	        while ($city_detail = $result->fetchObject()) {
 	            $options[$city_detail->city] = $city_detail->city;
@@ -1212,7 +1214,7 @@ class FosseeStatsForm extends FormBase {
 	            Database::setActiveConnection($foss_type);; //Active other database
 	            $options = array();
 	            $options[0] = '--------------';
-	            $result = Database::getConnection()->select($sub_project)->condition('country',$country)->fields($sub_project)->condition('state',$state)->execute();
+	            $result = Database::getConnection()->select($sub_project)->fields($sub_project)->condition('country',$country)->fields($sub_project)->condition('state',$state)->execute();
 	            while ($city_detail = $result->fetchObject()) {
 	                $options[$city_detail->city] = $city_detail->city;
 	            }
@@ -1223,7 +1225,7 @@ class FosseeStatsForm extends FormBase {
 	           	Database::setActiveConnection($foss_type);; //Active other database
 	            $options = array();
 	            $options[0] = '--------------';
-	            $result = \Drupal::database($sub_project)->condition('country',$country)->condition('state',$state)->execute();
+	            $result = Database::getConnection()->select($sub_project)->fields($sub_project)->condition('country',$country)->condition('state',$state)->execute();
 
 	            while ($city_detail = $result->fetchObject()) {
 	                $options[$city_detail->city] = $city_detail->city;
@@ -1238,7 +1240,7 @@ class FosseeStatsForm extends FormBase {
 	            Database::setActiveConnection();; //Active other database
 	            $options = array();
 	            $options[0] = '--------------';
-	            $result = \Drupal::database($sub_project)->condition('country',$country)->condition('foss_name',$foss_type)->execute();
+	            $result = Database::getConnection()->select($sub_project)->fields($sub_project)->condition('country',$country)->condition('foss_name',$foss_type)->execute();
 
 	            while ($city_detail = $result->fetchObject()) {
 	                $options[$city_detail->city] = $city_detail->city;
@@ -1344,12 +1346,10 @@ class FosseeStatsForm extends FormBase {
 	                      </ul>
 	                      <div class="tab-content">
 
-	        <div id="tbctabledata"class="tab-pane fade in active">' . $this->get_tabledata_TBC_or_LM("TBC", $startdate, $enddate) . '
-	        <div id="tbcchartdata" style="float:left;width:300px;height:300px;">' . \Drupal::service('renderer')->render(getchart("TBC")) . '</div>
+	        <div id="tbctabledata"class="tab-pane fade in active">' . $this->get_tabledata_TBC_or_LM("TBC", $startdate, $enddate)  . \Drupal::service('renderer')->render(getchart("TBC")) . '</div>
 	        </div>
 
-	        <div id="lmtabledata" class="tab-pane fade ">' . $this->get_tabledata_TBC_or_LM("LM", $startdate, $enddate) . '
-	        <div id="lmchartdata" style="float:left;width:3100px;height:300px;">' . \Drupal::service('renderer')->render(getchart("LM")) . '</div>
+	        <div id="lmtabledata" class="tab-pane fade ">' . $this->get_tabledata_TBC_or_LM("LM", $startdate, $enddate)  . \Drupal::service('renderer')->render(getchart("LM")) . '</div>
 	        </div>
 
 	        <div id="workshopdata" class="tab-pane fade ">' . $this->EA::workshop_view_all(0, $startdate, $enddate) . '</div>
@@ -1357,8 +1357,7 @@ class FosseeStatsForm extends FormBase {
 	        <div id="conferencedata" class="tab-pane fade ">' . EA::conference_seminar_view_all(0, "", "") . '</div>
 
 	        <div id="spokentutorialdata" class="tab-pane fade ">' . spokentutorial_view_all("") . '</div>
-	        <div id="otheractivities" class="tab-pane fade ">' . other_activities("","",$startdate,$enddate) . '
-	        <div id="otherchartdata" style="float:left;width:300px;height:300px;">' . \Drupal::service('renderer')->render(getchart("Other")) . '</div></div>
+	        <div id="otheractivities" class="tab-pane fade ">' . other_activities("","",$startdate,$enddate)  . \Drupal::service('renderer')->render(getchart("Other")) . '</div></div>
 	 </div>
 	          ';
 	        $response->addCommand(new HtmlCommand("#default_load", \Drupal::service('renderer')->render($form['default_load'])));
@@ -1519,12 +1518,12 @@ class FosseeStatsForm extends FormBase {
 	                 if ($value == "tbc") {
 	                      $tbcdatacheck=$this->get_tabledata_selectedFoss_TBC_LM($foss_type, 'TBC', 'all', $startdate, $enddate, $countryname, $statename, $cityname, $link_flag);
 
-	 $tbcchartcheck=\Drupal::service('renderer')->render(getchartforselectedProject($foss_type, 'TBC', $startdate, $enddate, $countryname, $statename, $cityname));
+	 $tbcchartcheck=\Drupal::service('renderer')->render($this->getchartforselectedProject($foss_type, 'TBC', $startdate, $enddate, $countryname, $statename, $cityname));
 
 	                 }
 	                 elseif ($value == "lab_migration") {
 	                $lmdatacheck= $this->get_tabledata_selectedFoss_TBC_LM($foss_type, 'LM', 'all', $startdate, $enddate, $countryname, $statename, $cityname, $link_flag) ;
-	             $lmchartcheck=\Drupal::service('renderer')->render(getchartforselectedProject($foss_type, 'LM', $startdate, $enddate, $countryname, $statename, $cityname));
+	             $lmchartcheck=\Drupal::service('renderer')->render($this->getchartforselectedProject($foss_type, 'LM', $startdate, $enddate, $countryname, $statename, $cityname));
 	                 }
 	                 elseif ($value == "workshop") {
 	                     $event_type = "Workshop";
@@ -1592,11 +1591,9 @@ class FosseeStatsForm extends FormBase {
 	                      </ul>
 	        <div class="tab-content">
 
-	            <div id="tbctabledata"class="tab-pane fade in active">' . $tbcdatacheck . '
-	            <div id="tbcchartdata" style="float:left;width:300px;height:300px;">' . $tbcchartcheck . '</div>
+	            <div id="tbctabledata"class="tab-pane fade in active">' . $tbcdatacheck . $tbcchartcheck . '</div>
 	            </div>
-	            <div id="lmtabledata" class="tab-pane fade ">' . $lmdatacheck . '
-	        <div id="lmchartdata" style="float:left;width:3100px;height:300px;">' . $lmchartcheck . '</div>
+	            <div id="lmtabledata" class="tab-pane fade ">' . $lmdatacheck  . $lmchartcheck . '</div>
 	        </div>
 	         <div id="workshopdata" class="tab-pane fade ">
 	         '. $workshopdatacheck . '</div>
@@ -1619,8 +1616,7 @@ class FosseeStatsForm extends FormBase {
 	                        <li class="active"><a data-toggle="tab" href="#tbctabledata">Textbook Companion</a></li></ul>
 	                        <div class="tab-content">
 
-	        <div id="tbctabledata"class="tab-pane fade in active">' . $this->get_tabledata_selectedFoss_TBC_LM($foss_type, 'TBC', 'all', $startdate, $enddate, $countryname, $statename, $cityname, $link_flag) . '
-	        <div id="tbcchartdata" style="float:left;width:300px;height:300px;">' . \Drupal::service('renderer')->render(getchartforselectedProject($foss_type, "TBC", $startdate, $enddate, $countryname, $statename, $cityname)) . '</div>
+	        <div id="tbctabledata"class="tab-pane fade in active">' . $this->get_tabledata_selectedFoss_TBC_LM($foss_type, 'TBC', 'all', $startdate, $enddate, $countryname, $statename, $cityname, $link_flag)  . \Drupal::service('renderer')->render($this->getchartforselectedProject($foss_type, "TBC", $startdate, $enddate, $countryname, $statename, $cityname)) . '</div>
 	        </div></div>';
 	        $form['default_load']['#markup'] = $pagecontent;
 	        $response->addCommand(new HtmlCommand("#default_load", \Drupal::service('renderer')->render($form['default_load'])));
@@ -1634,8 +1630,7 @@ class FosseeStatsForm extends FormBase {
 	                       <li><a data-toggle="tab" href="#lmtabledata">Lab Migration</a></li></ul>
 	                        <div class="tab-content">
 
-	       <div id="lmtabledata" class="tab-pane fade in active ">' . $this->get_tabledata_selectedFoss_TBC_LM($foss_type, 'LM', "all", $startdate, $enddate, $countryname, $statename, $cityname, $link_flag) . '
-	        <div id="lmchartdata" style="float:left;width:3100px;height:300px;">' . \Drupal::service('renderer')->render(getchartforselectedProject($foss_type, "LM", $startdate, $enddate, $countryname, $statename, $cityname)) . '</div>
+	       <div id="lmtabledata" class="tab-pane fade in active ">' . $this->get_tabledata_selectedFoss_TBC_LM($foss_type, 'LM', "all", $startdate, $enddate, $countryname, $statename, $cityname, $link_flag)  . \Drupal::service('renderer')->render($this->getchartforselectedProject($foss_type, "LM", $startdate, $enddate, $countryname, $statename, $cityname)) . '</div>
 	        </div>   </div>';
 	        $form['default_load']['#markup'] = $pagecontent;
 	        $response->addCommand(new HtmlCommand("#default_load", \Drupal::service('renderer')->render($form['default_load'])));
@@ -1795,16 +1790,16 @@ class FosseeStatsForm extends FormBase {
 	    }elseif ($sub_type == "Other") {
 	        $title = "Other Activities";
 	    }
-	    $id = 'piechart'.$chartno;//'piechart'.time();
+	    $id = 'piecharta'.$chartno;//'piechart'.time();
 	  	$chart_element['chart'] = [
 	  		'#type'=>'inline_template',
 	  		'#prefix'=>'<div id="'.$id.'" style="float:left;width:300px;height:300px;">',
 	    	'#suffix'=>'</div>'
 	  	];
 	  	//$chart_element['#attached']['library'][] = 'fossee_stats/piechart';
-	  	$chart_element['#attached']['drupalSettings']['gc'][$chartno]['title'] = $title;
-	  	$chart_element['#attached']['drupalSettings']['gc'][$chartno]['chart_id'] = $id;
-	    $chart_element['#attached']['drupalSettings']['gc'][$chartno]['chart_data'] = $this->get_data_for_chart_allproject($sub_type);
+	  	$chart_element['#attached']['drupalSettings']['gca'][$chartno]['title'] = $title;
+	  	$chart_element['#attached']['drupalSettings']['gca'][$chartno]['chart_id'] = $id;
+	    $chart_element['#attached']['drupalSettings']['gca'][$chartno]['chart_data'] = $this->get_data_for_chart_allproject($sub_type);
 	   /* $chart = array(
 	        '#type' => 'chart',
 	        '#title' => t($title),
@@ -1824,6 +1819,256 @@ class FosseeStatsForm extends FormBase {
 	    $example['chart'] = $chart;*/
 	    $chartno++;
 	    return $chart_element;
+	}
+
+		/* This function is used to create chart for TBC/LM */
+	public function getchartforselectedProject($foss_type, $sub_type, $startdate, $enddate, $countryname, $statename, $cityname) {
+
+		static $chartno = 0;
+	    $title = "";
+	    if ($sub_type == "TBC") {
+	        $title = $foss_type . "" . "'s Completed Textbook Companion Statistics";
+	    }
+	    else {
+	        $title = $foss_type . "" . "'s Completed Lab Migration Statistics";
+	    }
+
+	    $id = 'piecharts'.$chartno;//'piechart'.time();
+	  	$chart_element['chart'] = [
+	  		'#type'=>'inline_template',
+	  		'#prefix'=>'<div id="'.$id.'" style="float:left;width:300px;height:300px;">',
+	    	'#suffix'=>'</div>'
+	  	];
+	  	$chart_element['#attached']['drupalSettings']['gcs'][$chartno]['title'] = $title;
+	  	$chart_element['#attached']['drupalSettings']['gcs'][$chartno]['chart_id'] = $id;
+	    $chart_element['#attached']['drupalSettings']['gcs'][$chartno]['chart_data'] = $this->get_data_for_chart_selectedproject($foss_type, $sub_type, $startdate, $enddate, $countryname, $statename, $cityname);
+	    $chartno++;
+	    return $chart_element;
+	}
+
+	function get_data_for_chart_selectedproject($foss_type, $sub_type, $startdate, $enddate, $countryname, $statename, $cityname) {
+
+	    if ($enddate == "") {
+	        $enddate = date("Y-m-d");
+	    }
+	    $rows = array();
+	    array_push($rows, ['Entity','Value']);
+	    if ($sub_type == "TBC") {
+	        $query = Database::getConnection()->select('foss_type');
+	        $query->fields('foss_type', array(
+	            'id'
+	        ));
+	        $query->fields('foss_type', array(
+	            'foss_name'
+	        ));
+	        $query->fields('foss_type', array(
+	            'tbc'
+	        ));
+	        $query->condition('tbc', 1);
+	        $query->condition('foss_name', $foss_type);
+	        $result = $query->execute();
+	        $foss_detail = $result->fetchObject();
+	        if ($foss_detail->foss_name != NULL) {
+	            if ($foss_detail->foss_name != 'Python') {
+	                $rows = array();
+	                Database::setActiveConnection($foss_detail->foss_name); //Active other database
+	                //For TBC
+	                if ($foss_detail->foss_name != 'eSim'  && $foss_detail->foss_name != 'OpenModelica' && $foss_detail->foss_name != 'OpenFOAM' && $foss_detail->foss_name != 'OR-Tools') {
+	                    if ($foss_detail->foss_name != 'DWSIM') {
+	                        $query2 = Database::getConnection()->query("SELECT COUNT( pe.book ) AS book_count ,FROM_UNIXTIME(po.completion_date, '%Y') AS year FROM {textbook_companion_preference} pe LEFT JOIN {textbook_companion_proposal} po ON pe.proposal_id = po.id WHERE po.proposal_status =3 AND pe.approval_status =1 AND pe.category>0 AND po.city LIKE :city AND po.state LIKE :state AND po.country LIKE :country AND FROM_UNIXTIME(po.completion_date) >= :startdate AND FROM_UNIXTIME(po.completion_date) <= :enddate Group by FROM_UNIXTIME(po.completion_date, '%Y')", array(
+	                            ':city' => $cityname,
+	                            ':state' => $statename,
+	                            ':country' => $countryname,
+	                            ':startdate' => $startdate,
+	                            ':enddate' => $enddate
+	                        ));
+
+	                       /* $query3 = db_query("SELECT COUNT( pe.book ) AS book_count FROM textbook_companion_preference pe LEFT JOIN textbook_companion_proposal po ON pe.proposal_id = po.id WHERE po.proposal_status !=3 AND pe.approval_status =1 AND pe.category>0 AND po.city LIKE :city AND po.state LIKE :state AND po.country LIKE :country AND FROM_UNIXTIME(po.completion_date) >= :startdate AND FROM_UNIXTIME(po.completion_date) <= :enddate", array(
+	                            ':city' => $cityname,
+	                            ':state' => $statename,
+	                            ':country' => $countryname,
+	                            ':startdate' => $startdate,
+	                            ':enddate' => $enddate
+	                        ));*/
+	                    }
+	                    else {
+	                        $query2 = Database::getConnection()->query("SELECT COUNT( pe.book ) AS book_count ,FROM_UNIXTIME(po.completion_date, '%Y') AS year FROM {textbook_companion_preference} pe LEFT JOIN {textbook_companion_proposal} po ON pe.proposal_id = po.id WHERE po.proposal_status =3 AND pe.approval_status =1 AND pe.category>0 AND po.city LIKE :city AND po.state LIKE :state AND po.country LIKE :country AND FROM_UNIXTIME(po.completion_date) >= :startdate AND FROM_UNIXTIME(po.completion_date) <= :enddate Group by FROM_UNIXTIME(po.completion_date, '%Y')", array(
+	                            ':city' => $cityname,
+	                            ':state' => $statename,
+	                            ':country' => $countryname,
+	                            ':startdate' => $startdate,
+	                            ':enddate' => $enddate
+	                        ));
+	                       /* $query3 = db_query("SELECT COUNT( pe.book ) AS book_count FROM textbook_companion_preference pe LEFT JOIN textbook_companion_proposal po ON pe.proposal_id = po.id WHERE po.proposal_status !=3 AND pe.approval_status =1 AND pe.category>0 AND po.city LIKE :city AND po.state LIKE :state AND po.country LIKE :country AND FROM_UNIXTIME(po.completion_date) >= :startdate AND FROM_UNIXTIME(po.completion_date) <= :enddate", array(
+	                            ':city' => $cityname,
+	                            ':state' => $statename,
+	                            ':country' => $countryname,
+	                            ':startdate' => $startdate,
+	                            ':enddate' => $enddate
+	                        ));*/
+	                    }
+	                }
+	                else {
+	                    $query2 = Database::getConnection()->query("SELECT COUNT( pe.book ) AS book_count, FROM_UNIXTIME(po.completion_date, '%Y') AS year FROM {textbook_companion_preference} pe LEFT JOIN {textbook_companion_proposal} po ON pe.proposal_id = po.id WHERE po.proposal_status =3 AND pe.approval_status =1 AND po.city LIKE :city  AND po.state LIKE :state AND po.country LIKE :country AND FROM_UNIXTIME(po.completion_date) >= :startdate AND FROM_UNIXTIME(po.completion_date) <= :enddate Group by FROM_UNIXTIME(po.completion_date, '%Y')", array(
+	                        ':city' => $cityname,
+	                        ':state' => $statename,
+	                        ':country' => $countryname,
+	                        ':startdate' => $startdate,
+	                        ':enddate' => $enddate
+	                    ));
+	                    /*$query3 = db_query("SELECT COUNT( pe.book ) AS book_count FROM textbook_companion_preference pe LEFT JOIN textbook_companion_proposal po ON pe.proposal_id = po.id WHERE po.proposal_status !=3 AND pe.approval_status =1 AND po.city LIKE :city AND po.state LIKE :state AND po.country LIKE :country AND FROM_UNIXTIME(po.completion_date) >= :startdate AND FROM_UNIXTIME(po.completion_date) <= :enddate", array(
+	                        ':city' => $cityname,
+	                        ':state' => $statename,
+	                        ':country' => $countryname,
+	                        ':startdate' => $startdate,
+	                        ':enddate' => $enddate
+	                    ));*/
+	                }
+	                Database::setActiveConnection('default'); // We need to call the main (drupal) db back
+	                Database::setActiveConnection();
+
+	                $result = $query2->fetchAll();
+
+	                foreach ($result as $tbc_yearwise_count) {
+
+	            $completedbookcount= $tbc_yearwise_count->book_count;
+	            $option1 = array(
+	                    $tbc_yearwise_count->year,
+	                    (int) $completedbookcount
+	                );
+	                array_push($rows, $option1);
+	        }
+	               /* while ($tbc_yearwise_count = $result->fetchObject()) {
+	                  $completedbookcount= $tbc_yearwise_count->book_count;
+	            $option1 = array(
+	                    $tbc_yearwise_count->year,
+	                    (int) $completedbookcount
+	                );
+	                array_push($rows, $option1);
+
+	          }*/
+
+
+	                //$completedbookcount = $query2->fetchObject()->book_count;
+
+	                //$pendingbookcount = $query3->fetchObject()->book_count;
+	                /*$option1 = array(
+	                    "Completed TBC",
+	                    (int) $completedbookcount
+	                );
+	                array_push($rows, $option1);*/
+	               /* $option2 = array(
+	                    "In Progress TBC",
+	                    (int) $pendingbookcount
+	                );
+	                array_push($rows, $option2);*/
+	            }
+	            else {
+	                $rows = array();
+	                Database::setActiveConnection($foss_detail->foss_name); //Active other database
+	                $query2 = Database::getConnection()->select('tbc_book');
+	                $query2->addExpression('count(*)', 'count');
+	                //$query2->condition('author', '%'.$extrafilter.'%', 'LIKE');
+	                $query2->condition('approved', 1);
+	                $result2 = $query2->execute();
+
+	                /*$query3 = Database::getConnection()->select('tbc_book');
+	                $query3->addExpression('count(*)', 'count');
+	                //$query3->condition('author', '%'.$extrafilter.'%', 'LIKE');
+	                $query3->condition('approved', 1, '<>');
+	                $result3 = $query3->execute();*/
+	                Database::setActiveConnection('default'); // We need to call the main (drupal) db back
+	                Database::setActiveConnection();
+	                $completedbookcount = $result2->fetchObject()->count;
+	                //$pendingbookcount = $result3->fetchObject()->count;
+	                $option1 = array(
+	                    "Completed TBC",
+	                    (int) $completedbookcount
+	                );
+	                array_push($rows, $option1);
+	                /*$option2 = array(
+	                    "In Progress TBC",
+	                    (int) $pendingbookcount
+	                );
+	                array_push($rows, $option2);*/
+	            }
+	        }
+	    }
+	    else {
+	        $rows = array();
+	        $query = Database::getConnection()->select('foss_type');
+	        $query->fields('foss_type', array(
+	            'id'
+	        ));
+	        $query->fields('foss_type', array(
+	            'foss_name'
+	        ));
+	        $query->fields('foss_type', array(
+	            'lab_migration'
+	        ));
+	        $query->condition('lab_migration', 1);
+	        $query->condition('foss_name', $foss_type);
+	        $result = $query->execute();
+	        $foss_detail = $result->fetchObject();
+	        if ($foss_detail->foss_name != NULL) {
+	            Database::setActiveConnection($foss_detail->foss_name); //Active other database
+	            //For LM
+	            $query3 = Database::getConnection()->query("SELECT COUNT(*) AS count ,FROM_UNIXTIME(approval_date, '%Y') AS year from {lab_migration_proposal} WHERE approval_status=3 AND city LIKE :city AND  state LIKE :state AND country LIKE :country AND FROM_UNIXTIME(approval_date) >=:startdate AND FROM_UNIXTIME(approval_date) <=:enddate group by FROM_UNIXTIME(approval_date, '%Y')", array(
+	                ':city' => $cityname,
+	                ':state' => $statename,
+	                ':country' => $countryname,
+	                ':startdate' => $startdate,
+	                ':enddate' => $enddate
+	            ));
+	           /* $query4 = db_query("SELECT COUNT(*) AS count from lab_migration_proposal WHERE approval_status=1 AND city LIKE :city AND state LIKE :state AND country LIKE :country AND FROM_UNIXTIME(approval_date) >=:startdate AND FROM_UNIXTIME(approval_date) <=:enddate", array(
+	                ':city' => $cityname,
+	                ':state' => $statename,
+	                ':country' => $countryname,
+	                ':startdate' => $startdate,
+	                ':enddate' => $enddate
+	            ));*/
+	            Database::setActiveConnection('default'); // We need to call the main (drupal) db back
+	            Database::setActiveConnection();
+
+	            $result = $query3->fetchAll();
+
+	                foreach ($result as $lm_yearwise_count) {
+
+	            $completedlabcount= $lm_yearwise_count->count;
+	            $option1 = array(
+	                    $lm_yearwise_count->year,
+	                    (int) $completedlabcount
+	                );
+	                array_push($rows, $option1);
+	        }
+
+	              /*$result = $query3->execute();
+
+	                while ($lm_yearwise_count = $result->fetchObject()) {
+	                  $completedlabcount= $lm_yearwise_count->count;
+	            $option1 = array(
+	                    $lm_yearwise_count->year,
+	                    (int) $completedlabcount
+	                );
+	                array_push($rows, $option1);
+
+	          }*/
+
+	            /*$completedlabcount = $query3->fetchObject()->count;
+	            //$pendinglabcount = $query4->fetchObject()->count;
+	            $option1 = array(
+	                "Completed Labs",
+	                (int) $completedlabcount
+	            );
+	            array_push($rows, $option1);*/
+	            /*$option2 = array(
+	                "In Progress labs",
+	                (int) $pendinglabcount
+	            );
+	            array_push($rows, $option2);*/
+	        }
+	    }
+	    return $rows;
 	}
 
 	public function spokentutorial_view_all($foss_name) {
@@ -2703,7 +2948,7 @@ class FosseeStatsForm extends FormBase {
 	                        ));*/
 	                        $query3 = Database::getConnection()->select('textbook_companion_preference', 'pe')->fields('pe',['book']);
 	                    	$query3->addJoin('left','textbook_companion_proposal', 'po', 'pe.proposal_id = po.id');
-	                    	$result3 = $query2->condition('po.proposal_status',3,'<>')->condition('pe.approval_status',1)->condition('po.category',0,'>')->condition('po.city',$cityname,'LIKE')->condition('po.state',$statename,'LIKE')->condition('po.country',$countryname,'LIKE')->where('FROM_UNIXTIME(po.completion_date) >= :startdate',array(':startdate'=>$startdate))->where('FROM_UNIXTIME(po.completion_date) <= :enddate',array(':enddate'=>$pending_enddate))->countQuery()->execute();
+	                    	$result3 = $query2->condition('po.proposal_status',3,'<>')->condition('pe.approval_status',1)->condition('pe.category',0,'>')->condition('po.city',$cityname,'LIKE')->condition('po.state',$statename,'LIKE')->condition('po.country',$countryname,'LIKE')->where('FROM_UNIXTIME(po.completion_date) >= :startdate',array(':startdate'=>$startdate))->where('FROM_UNIXTIME(po.completion_date) <= :enddate',array(':enddate'=>$pending_enddate))->countQuery()->execute();
 	                    }
 	                    else {
 	                        /*$query3 = db_query("SELECT COUNT( pe.book ) AS book_count FROM {textbook_companion_preference} pe LEFT JOIN {textbook_companion_proposal} po ON pe.proposal_id = po.id WHERE po.proposal_status <> 3 AND pe.approval_status =1 AND pe.category>0 AND po.city LIKE :city AND po.state LIKE :state AND po.country LIKE :country AND FROM_UNIXTIME(po.completion_date) >= :startdate AND FROM_UNIXTIME(po.completion_date) <= :enddate", array(
@@ -2715,7 +2960,7 @@ class FosseeStatsForm extends FormBase {
 	                        ));*/
 	                        $query3 = Database::getConnection()->select('textbook_companion_preference', 'pe')->fields('pe',['book']);
 	                    	$query3->addJoin('left','textbook_companion_proposal', 'po', 'pe.proposal_id = po.id');
-	                    	$result3 = $query2->condition('po.proposal_status',3,'<>')->condition('pe.approval_status',1)->condition('po.category',0,'>')->condition('po.city',$cityname,'LIKE')->condition('po.state',$statename,'LIKE')->condition('po.country',$countryname,'LIKE')->where('FROM_UNIXTIME(po.completion_date) >= :startdate',array(':startdate'=>$startdate))->where('FROM_UNIXTIME(po.completion_date) <= :enddate',array(':enddate'=>$pending_enddate))->countQuery()->execute();
+	                    	$result3 = $query2->condition('po.proposal_status',3,'<>')->condition('pe.approval_status',1)->condition('pe.category',0,'>')->condition('po.city',$cityname,'LIKE')->condition('po.state',$statename,'LIKE')->condition('po.country',$countryname,'LIKE')->where('FROM_UNIXTIME(po.completion_date) >= :startdate',array(':startdate'=>$startdate))->where('FROM_UNIXTIME(po.completion_date) <= :enddate',array(':enddate'=>$pending_enddate))->countQuery()->execute();
 	                    }
 	                }
 	                else {
@@ -2815,7 +3060,7 @@ class FosseeStatsForm extends FormBase {
 	                ':startdate' => $startdate,
 	                ':enddate' => $enddate
 	            ));*/
-	            $result2 = Database::getConnection()->select('lab_migration_proposal')->fields('lab_migration_proposal')->condition('approval_status',3)->condition('city',$cityname,'LIKE')->condition('state',$statename,'LIKE')->condition('country',$countryname,'LIKE')->where('FROM_UNIXTIME(approval_date) >= :startdate',array(':startdate'=>$startdate))->where('FROM_UNIXTIME(appproval_date) <= :enddate',array(':enddate'=>$enddate))->countQuery()->execute();
+	            $result2 = Database::getConnection()->select('lab_migration_proposal')->fields('lab_migration_proposal')->condition('approval_status',3)->condition('city',$cityname,'LIKE')->condition('state',$statename,'LIKE')->condition('country',$countryname,'LIKE')->where('FROM_UNIXTIME(approval_date) >= :startdate',array(':startdate'=>$startdate))->where('FROM_UNIXTIME(approval_date) <= :enddate',array(':enddate'=>$enddate))->countQuery()->execute();
 
 	            $completedlabcount = $result2->fetchField();
 	            if ($foss_detail->lm_completed != "" && $foss_detail->lm_completed != NULL && $link_flag != 1) {
@@ -2835,7 +3080,7 @@ class FosseeStatsForm extends FormBase {
 	                ':startdate' => $startdate,
 	                ':enddate' => $enddate
 	            ));*/
-	            $result3 = Database::getConnection()->select('lab_migration_proposal')->fields('lab_migration_proposal')->condition('approval_status',1)->condition('city',$cityname,'LIKE')->condition('state',$statename,'LIKE')->condition('country',$countryname,'LIKE')->where('FROM_UNIXTIME(approval_date) >= :startdate',array(':startdate'=>$startdate))->where('FROM_UNIXTIME(appproval_date) <= :enddate',array(':enddate'=>$enddate))->countQuery()->execute();
+	            $result3 = Database::getConnection()->select('lab_migration_proposal')->fields('lab_migration_proposal')->condition('approval_status',1)->condition('city',$cityname,'LIKE')->condition('state',$statename,'LIKE')->condition('country',$countryname,'LIKE')->where('FROM_UNIXTIME(approval_date) >= :startdate',array(':startdate'=>$startdate))->where('FROM_UNIXTIME(approval_date) <= :enddate',array(':enddate'=>$enddate))->countQuery()->execute();
 
 	            $pendinglabcount = $result3->fetchField();
 	            if ($foss_detail->lm_pending != "" && $foss_detail->lm_pending != NULL && $link_flag != 1) {
@@ -2989,7 +3234,7 @@ class FosseeStatsForm extends FormBase {
 	                ':startdate' => $startdate,
 	                ':enddate' => $enddate
 	            ));*/
-	            $result2 = Database::getConnection()->select('lab_migration_proposal')->fields('lab_migration_proposal')->condition('approval_status',3)->condition('city',$cityname,'LIKE')->condition('state',$statename,'LIKE')->condition('country',$countryname,'LIKE')->where('FROM_UNIXTIME(approval_date) >= :startdate',array(':startdate'=>$startdate))->where('FROM_UNIXTIME(appproval_date) <= :enddate',array(':enddate'=>$enddate))->countQuery()->execute();
+	            $result2 = Database::getConnection()->select('lab_migration_proposal')->fields('lab_migration_proposal')->condition('approval_status',3)->condition('city',$cityname,'LIKE')->condition('state',$statename,'LIKE')->condition('country',$countryname,'LIKE')->where('FROM_UNIXTIME(approval_date) >= :startdate',array(':startdate'=>$startdate))->where('FROM_UNIXTIME(approval_date) <= :enddate',array(':enddate'=>$enddate))->countQuery()->execute();
 	            $completedlabcount = $result2->fetchField();
 	            if ($foss_detail->lm_completed != "" && $foss_detail->lm_completed != NULL && $link_flag != 1) {
 	                //$clink = "<a href=" . $foss_detail->lm_completed . " target='_blank'>" . $completedlabcount . "</a>";
@@ -3140,7 +3385,7 @@ class FosseeStatsForm extends FormBase {
 	                ':startdate' => $startdate,
 	                ':enddate' => $enddate
 	            ));*/
-	            $result2 = Database::getConnection()->select('lab_migration_proposal')->fields('lab_migration_proposal')->condition('approval_status',1)->condition('city',$cityname,'LIKE')->condition('state',$statename,'LIKE')->condition('country',$countryname,'LIKE')->where('FROM_UNIXTIME(approval_date) >= :startdate',array(':startdate'=>$startdate))->where('FROM_UNIXTIME(appproval_date) <= :enddate',array(':enddate'=>$enddate))->countQuery()->execute();
+	            $result2 = Database::getConnection()->select('lab_migration_proposal')->fields('lab_migration_proposal')->condition('approval_status',1)->condition('city',$cityname,'LIKE')->condition('state',$statename,'LIKE')->condition('country',$countryname,'LIKE')->where('FROM_UNIXTIME(approval_date) >= :startdate',array(':startdate'=>$startdate))->where('FROM_UNIXTIME(approval_date) <= :enddate',array(':enddate'=>$enddate))->countQuery()->execute();
 
 
 	            $pendinglabcount = $result2->fetchField();
